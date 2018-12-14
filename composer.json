@@ -5,5 +5,8 @@
       "Matks\\Battle\\": "src/"
     }
   },
-  "minimum-stability": "stable"
+  "minimum-stability": "stable",
+  "require-dev": {
+    "behat/behat": "^3.5"
+  }
 }
