@@ -1,0 +1,9 @@
+{
+  "name": "matks/behat-intro-battle",
+  "autoload": {
+    "psr-4": {
+      "Matks\\Battle\\": "src/"
+    }
+  },
+  "minimum-stability": "stable"
+}

@@ -1,1 +1,2 @@
-# behat-intro-battle
+Behat introduction: battle
+==========================
