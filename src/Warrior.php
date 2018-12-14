@@ -2,19 +2,35 @@
 
 namespace Matks\Battle;
 
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\ORM\Mapping\Column;
+
+/**
+ * @Entity @Table(name="warriors")
+ **/
 class Warrior
 {
+    /** @Id @Column(type="integer") @GeneratedValue **/
+    protected $id;
+
     /**
+     * @Column(type="integer")
+     *
      * @var integer
      */
     private $side;
 
     /**
+     * @Column(type="integer")
+     *
      * @var integer
      */
     private $attackPoints;
 
     /**
+     * @Column(type="integer")
+     *
      * @var integer
      */
     private $healthPoints;

@@ -11,3 +11,10 @@ To run behat
 ```
 vendor/bin/behat
 ```
+
+To see sqlite content
+```
+sqlite3
+.open db.sqlite
+SELECT * FROM warriors;
+```

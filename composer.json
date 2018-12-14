@@ -8,5 +8,8 @@
   "minimum-stability": "stable",
   "require-dev": {
     "behat/behat": "^3.5"
+  },
+  "require": {
+    "doctrine/orm": "^2.6"
   }
 }

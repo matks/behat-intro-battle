@@ -3,6 +3,9 @@
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Doctrine\ORM\Tools\Setup;
+use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\ORM\EntityManager;
 
 /**
  * Defines application features from the specific context.
@@ -16,8 +19,36 @@ class FeatureContext implements Context
 
     private $lastResult;
 
+    private $entityManager;
+
     public function __construct()
     {
+
+
+        $isDevMode = true;
+        $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__ . "/../../src"), $isDevMode);
+
+        // database configuration parameters
+        $conn = array(
+            'driver' => 'pdo_sqlite',
+            'path' => __DIR__ . '/../../db.sqlite',
+        );
+
+        $this->entityManager = EntityManager::create($conn, $config);
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function buildSchema($event)
+    {
+        // to uncomment to solve issues
+        /*$metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
+        if (!empty($metadata)) {
+            $tool = new SchemaTool($this->entityManager);
+            $tool->dropSchema($metadata);
+            $tool->createSchema($metadata);
+        }*/
     }
 
     /**
@@ -25,7 +56,7 @@ class FeatureContext implements Context
      */
     public function iPrepareTheBattle($arg1)
     {
-        $this->battle = new Matks\Battle\Battle($arg1);
+        $this->battle = new Matks\Battle\Battle($arg1, $this->entityManager);
     }
 
     /**

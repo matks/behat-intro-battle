@@ -2,15 +2,12 @@
 
 namespace Matks\Battle;
 
+use Doctrine\ORM\EntityManager;
+
 class Battle
 {
     const SIDE_1 = 1;
     const SIDE_2 = 2;
-
-    /**
-     * @var array
-     */
-    private $mapping;
 
     /**
      * @var string
@@ -18,12 +15,18 @@ class Battle
     private $battleName;
 
     /**
-     * @param string $battleName
+     * @var EntityManager
      */
-    public function __construct($battleName)
+    private $entityManager;
+
+    /**
+     * @param string $battleName
+     * @param EntityManager $battleName
+     */
+    public function __construct($battleName, EntityManager $entityManager)
     {
-        $this->mapping = [];
         $this->battleName = $battleName;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -38,11 +41,8 @@ class Battle
             throw new \Exception('Only allowed sides: 1 or 2');
         }
 
-        if (!array_key_exists($sideId, $this->mapping)) {
-            $this->mapping[$sideId] = [];
-        }
-
-        $this->mapping[$sideId][] = $warrior;
+        $this->entityManager->persist($warrior);
+        $this->entityManager->flush();
     }
 
     /**
@@ -52,22 +52,36 @@ class Battle
     {
         $sideStats = [];
 
-        foreach ($this->mapping as $sideId => $warriors) {
+        $dql = 'SELECT w FROM Matks\Battle\Warrior w';
 
-            $attackPointsTotal = 0;
-            $healthPointsTotal = 0;
+        $query = $this->entityManager->createQuery($dql);
+        $allWarriors = $query->getResult();
 
-            /** @var Warrior $warrior */
-            foreach ($warriors as $warrior) {
-                $attackPointsTotal += $warrior->getAttackPoints();
-                $healthPointsTotal += $warrior->getHealthPoints();
-            }
+        $attackPointsTotal = [
+            self::SIDE_1 => 0,
+            self::SIDE_2 => 0,
+        ];
+        $healthPointsTotal = [
+            self::SIDE_1 => 0,
+            self::SIDE_2 => 0,
+        ];
 
-            $sideStats[$sideId] = [
-                'attack' => $attackPointsTotal,
-                'health' => $healthPointsTotal,
-            ];
+        foreach ($allWarriors as $warrior) {
+
+            $attackPointsTotal[$warrior->getSide()] += $warrior->getAttackPoints();
+            $healthPointsTotal[$warrior->getSide()] += $warrior->getHealthPoints();
         }
+
+        $sideStats = [
+            self::SIDE_1 => [
+                'attack' => $attackPointsTotal[self::SIDE_1],
+                'health' => $healthPointsTotal[self::SIDE_1],
+            ],
+            self::SIDE_2 => [
+                'attack' => $attackPointsTotal[self::SIDE_2],
+                'health' => $healthPointsTotal[self::SIDE_2],
+            ]
+        ];
 
         if ($sideStats[self::SIDE_1]['attack'] > $sideStats[self::SIDE_2]['health']) {
             return self::SIDE_1;
