@@ -7,6 +7,11 @@ composer require behat/behat --dev
 vendor/bin/behat --init
 ```
 
+To setup sqlite tests database
+```
+vendor/bin/doctrine orm:schema-tool:create
+```
+
 To run behat
 ```
 vendor/bin/behat
